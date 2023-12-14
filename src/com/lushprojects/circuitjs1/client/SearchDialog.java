@@ -48,10 +48,15 @@ public class SearchDialog extends Dialog {
 	public SearchDialog(CirSim asim) {
 		super();
 		sim = asim;
+		this.setWidth("400px");
+		this.addStyleName("searchDialog");
 		vp=new VerticalPanel();
-		setWidget(vp);
+		vp.setWidth("400px");
+
+
 		textBox = new TextBox();
 		textBox.setMaxLength(30);
+		textBox.addStyleName("searchInput");
 		vp.add(textBox);
 		textBox.addKeyUpHandler(
 				new KeyUpHandler() {
@@ -90,10 +95,10 @@ public class SearchDialog extends Dialog {
 		});
 
 		setText(Locale.LS("Find Component"));
-		textBox.setWidth("100%");
+		textBox.setWidth("390px");
 
 		listBox = new ListBox();
-		listBox.setWidth("100%");
+		listBox.setWidth("400px");
 		listBox.addDoubleClickHandler(new DoubleClickHandler() {
 			public void onDoubleClick(DoubleClickEvent ev) {
 				apply();
@@ -109,6 +114,7 @@ public class SearchDialog extends Dialog {
 			listBox.addItem(item.getName());
 		}
 
+		setWidget(vp);
 		this.center();
 		textBox.setFocus(true);
 
