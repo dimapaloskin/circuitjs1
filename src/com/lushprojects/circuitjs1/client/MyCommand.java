@@ -30,7 +30,8 @@ public class MyCommand implements Command {
 		itemName=item;
 	}
 	
-	public void execute() {
+	public void execute()
+	{
 		circuitjs1.mysim.menuPerformed(menuName, itemName);
 	}
 

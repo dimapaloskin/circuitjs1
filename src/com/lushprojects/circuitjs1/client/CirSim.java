@@ -131,6 +131,7 @@ MouseOutHandler, MouseWheelHandler {
     CheckboxMenuItem mouseWheelEditCheckItem;
     private Label powerLabel;
     private Label titleLabel;
+	private Label mouseModeLabel;
     private Scrollbar speedBar;
     private Scrollbar currentBar;
     private Scrollbar powerBar;
@@ -512,6 +513,7 @@ MouseOutHandler, MouseWheelHandler {
 	menuBar = new MenuBar();
 	menuBar.addItem(Locale.LS("File"), fileMenuBar);
 	verticalPanel=new VerticalPanel();
+	verticalPanel.setSpacing(5);
 
 	verticalPanel.getElement().addClassName("verticalPanel");
 	verticalPanel.getElement().setId("painel");
@@ -663,7 +665,7 @@ MouseOutHandler, MouseWheelHandler {
 	else {
 		DOM.appendChild(layoutPanel.getElement(), sidePanelCheckbox);
 		DOM.appendChild(layoutPanel.getElement(), sidePanelCheckboxLabel);
-	    layoutPanel.addEast(verticalPanel, VERTICALPANELWIDTH);
+	    layoutPanel.addEast(verticalPanel, VERTICALPANELWIDTH + 10);
 	}
 	menuBar.getElement().insertFirst(menuBar.getElement().getChild(1));
 	menuBar.getElement().getFirstChildElement().setAttribute("onclick", "document.getElementsByClassName('toptrigger')[0].checked = false");
@@ -692,12 +694,23 @@ MouseOutHandler, MouseWheelHandler {
 	    }
 	});
 	resetButton.setStylePrimaryName("topButton");
-	buttonPanel.add(runStopButton = new Button(Locale.LSHTML("<Strong>RUN</Strong>&nbsp;/&nbsp;Stop")));
+	buttonPanel.add(runStopButton = new Button(Locale.LSHTML("STOP")));
+	runStopButton.setWidth("60px");
 	runStopButton.addClickHandler(new ClickHandler() {
 	    public void onClick(ClickEvent event) {
 		setSimRunning(!simIsRunning());
 	    }
 	});
+
+	Label l;
+	verticalPanel.add(l = new Label("Mouse mode:"));
+	l.addStyleName("topSpace");
+	l.addStyleName("bold");
+	l.addStyleName("headerSm");
+
+	mouseModeLabel = new Label("Select");
+	mouseModeLabel.setStyleName("headerMed");
+	verticalPanel.add(mouseModeLabel);
 
 	/*
 	dumpMatrixButton = new Button("Dump Matrix");
@@ -709,7 +722,7 @@ MouseOutHandler, MouseWheelHandler {
 	if (LoadFile.isSupported())
 	    verticalPanel.add(loadFileInput = new LoadFile(this));
 
-	Label l;
+
 	verticalPanel.add(l = new Label(Locale.LS("Simulation Speed")));
 	l.addStyleName("topSpace");
 
@@ -729,7 +742,10 @@ MouseOutHandler, MouseWheelHandler {
 	//	verticalPanel.add(new Label(""));
 	//        Font f = new Font("SansSerif", 0, 10);
 	l = new Label(Locale.LS("Current Circuit:"));
+
 	l.addStyleName("topSpace");
+	l.addStyleName("bold");
+
 	//        l.setFont(f);
 	titleLabel = new Label("Label");
 	//        titleLabel.setFont(f);
@@ -1407,12 +1423,12 @@ MouseOutHandler, MouseWheelHandler {
     	    	if (stopMessage != null)
     	    	    return;
     		simRunning = true;
-    		runStopButton.setHTML(Locale.LSHTML("<strong>RUN</strong>&nbsp;/&nbsp;Stop"));
+    		runStopButton.setHTML(Locale.LSHTML("STOP"));
     		runStopButton.setStylePrimaryName("topButton");
     		timer.scheduleRepeating(FASTTIMER);
     	} else {
     		simRunning = false;
-    		runStopButton.setHTML(Locale.LSHTML("Run&nbsp;/&nbsp;<strong>STOP</strong>"));
+    		runStopButton.setHTML(Locale.LSHTML("RUN"));
     		runStopButton.setStylePrimaryName("topButton-red");
     		timer.cancel();
 		repaint();
@@ -1426,17 +1442,22 @@ MouseOutHandler, MouseWheelHandler {
     boolean needsRepaint;
     
     void repaint() {
-	if (!needsRepaint) {
-	    needsRepaint = true;
-	    Scheduler.get().scheduleFixedDelay(new Scheduler.RepeatingCommand() {
-		public boolean execute() {
-		      updateCircuit();
-		      needsRepaint = false;
-		      return false;
-		  }
-	    }, FASTTIMER);
-	}
+		if (!needsRepaint) {
+			updateMouseMode();
+			needsRepaint = true;
+			Scheduler.get().scheduleFixedDelay(new Scheduler.RepeatingCommand() {
+			public boolean execute() {
+				  updateCircuit();
+				  needsRepaint = false;
+				  return false;
+			  }
+			}, FASTTIMER);
+		}
     }
+
+	void updateMouseMode() {
+		mouseModeLabel.setText(mouseModeStr.replace("Elm", ""));
+	}
     
     // *****************************************************************
     //                     UPDATE CIRCUIT
@@ -1661,6 +1682,10 @@ MouseOutHandler, MouseWheelHandler {
                 g.drawString(splits[x], 10, height + (increment * x));
             }
         }
+
+		if (mouseModeStr.endsWith("Elm") || mouseModeStr == "Wire") {
+			g.drawString(mouseModeStr.replace("Elm", ""), mouseCursorX + 10, mouseCursorY - 10);
+		}
         
         // This should always be the last 
         // thing called by updateCircuit();
@@ -3506,8 +3531,8 @@ MouseOutHandler, MouseWheelHandler {
     		Graphics.exitFullScreen();
     	    centreCircuit();
     	}
-    
-	repaint();
+
+		repaint();
     }
     
     int countScopeElms() {
@@ -5396,6 +5421,7 @@ MouseOutHandler, MouseWheelHandler {
     			mouseModeStr = "Select";
     			tempMouseMode = mouseMode;
     			e.cancel();
+				updateMouseMode();
     		}
 
     		if (e.getNativeEvent().getCtrlKey() || e.getNativeEvent().getMetaKey()) {
@@ -5457,12 +5483,14 @@ MouseOutHandler, MouseWheelHandler {
     			setMouseMode(MODE_ADD_ELM);
     			mouseModeStr=c;
     			tempMouseMode = mouseMode;
+				updateMouseMode();
     		}
     		if (cc==32) {
 			    setMouseMode(MODE_SELECT);
 			    mouseModeStr = "Select";
 			    tempMouseMode = mouseMode;
-			    e.cancel();    			
+			    e.cancel();
+				updateMouseMode();
     		}
     	}
     }

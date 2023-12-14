@@ -51,8 +51,8 @@ setup() {
     chmod +x "$GWT_DIR/webAppCreator"
     "$GWT_DIR/webAppCreator" -out ../tempProject com.lushprojects.circuitjs1.circuitjs1
     cp ../tempProject/build.xml ./
-    sed -i 's/source="1.7"/source="1.8"/g' build.xml
-    sed -i 's/target="1.7"/target="1.8"/g' build.xml
+    sed -i'' -e 's/source="1.7"/source="1.8"/g' build.xml
+    sed -i'' -e 's/target="1.7"/target="1.8"/g' build.xml
     rm -rf ../tempProject
 }
 
