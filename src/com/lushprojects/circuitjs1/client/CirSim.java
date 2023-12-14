@@ -512,6 +512,7 @@ MouseOutHandler, MouseWheelHandler {
 	menuBar = new MenuBar();
 	menuBar.addItem(Locale.LS("File"), fileMenuBar);
 	verticalPanel=new VerticalPanel();
+	verticalPanel.setSpacing(5);
 
 	verticalPanel.getElement().addClassName("verticalPanel");
 	verticalPanel.getElement().setId("painel");
@@ -663,7 +664,7 @@ MouseOutHandler, MouseWheelHandler {
 	else {
 		DOM.appendChild(layoutPanel.getElement(), sidePanelCheckbox);
 		DOM.appendChild(layoutPanel.getElement(), sidePanelCheckboxLabel);
-	    layoutPanel.addEast(verticalPanel, VERTICALPANELWIDTH);
+	    layoutPanel.addEast(verticalPanel, VERTICALPANELWIDTH + 10);
 	}
 	menuBar.getElement().insertFirst(menuBar.getElement().getChild(1));
 	menuBar.getElement().getFirstChildElement().setAttribute("onclick", "document.getElementsByClassName('toptrigger')[0].checked = false");
