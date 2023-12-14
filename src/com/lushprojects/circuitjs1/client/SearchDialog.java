@@ -94,11 +94,11 @@ public class SearchDialog extends Dialog {
 			}
 		});
 
-		setText(Locale.LS("Find Component"));
-		textBox.setWidth("390px");
-
+		textBox.setWidth("100%");
+		textBox.getElement().setPropertyString("placeholder", "Find Component");
 		listBox = new ListBox();
-		listBox.setWidth("400px");
+		listBox.setWidth("100%");
+		listBox.addStyleName("searchList");
 		listBox.addDoubleClickHandler(new DoubleClickHandler() {
 			public void onDoubleClick(DoubleClickEvent ev) {
 				apply();

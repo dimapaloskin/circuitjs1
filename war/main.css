@@ -155,6 +155,12 @@ html, body, * {
 .searchInput {
     margin-bottom: 10px;
     font-size: 24px !important;
+    padding: 15px !important;
+    box-sizing: border-box;
+}
+
+.searchList {
+    font-size: 18px;
 }
 
 
