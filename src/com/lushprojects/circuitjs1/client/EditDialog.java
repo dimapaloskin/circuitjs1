@@ -19,7 +19,6 @@
 
 package com.lushprojects.circuitjs1.client;
 
-
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -92,13 +91,15 @@ class EditDialog extends Dialog {
 				closeDialog();
 			}
 		});
-		buildDialog();
 		this.center();
+		buildDialog();
+
 	}
 	
 	void buildDialog() {
 		int i;
 		int idx;
+		int textBoxes = 0;
 		for (i = 0; ; i++) {
 			Label l = null;
 			einfos[i] = elm.getEditInfo(i);
@@ -154,12 +155,19 @@ class EditDialog extends Dialog {
 			} else {
 			    vp.insert(ei.textf = new TextBox(), idx);
 			    if (ei.text != null) {
-				ei.textf.setText(ei.text);
-				ei.textf.setVisibleLength(50);
+					ei.textf.setText(ei.text);
+					ei.textf.setVisibleLength(50);
+
 			    }
 			    if (ei.text == null) {
-				ei.textf.setText(unitString(ei));
+					ei.textf.setText(unitString(ei));
 			    }
+
+				if (textBoxes == 0) {
+					ei.textf.selectAll();
+					ei.textf.setFocus(true);
+				}
+				textBoxes++;
 			}
 		}
 		einfocount = i;
