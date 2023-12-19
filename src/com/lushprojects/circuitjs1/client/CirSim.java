@@ -531,7 +531,8 @@ MouseOutHandler, MouseWheelHandler {
 	topPanelCheckboxLabel.setAttribute("for", "toptrigger");
 
 	// make buttons side by side if there's room
-	buttonPanel=(VERTICALPANELWIDTH == 166) ? new HorizontalPanel() : new VerticalPanel();
+//	buttonPanel=(VERTICALPANELWIDTH == 166) ? new HorizontalPanel() : new VerticalPanel();
+	buttonPanel = new HorizontalPanel();
 
 	m = new MenuBar(true);
 	m.addItem(undoItem = menuItemWithShortcut("ccw", "Undo", Locale.LS(ctrlMetaKey + "Z"), new MyCommand("edit","undo")));
@@ -4140,7 +4141,7 @@ MouseOutHandler, MouseWheelHandler {
     				e.isAltKeyDown()))
     			return;
     	}
-    	
+
     	if (tempMouseMode==MODE_DRAG_SPLITTER) {
     		dragSplitter(e.getX(), e.getY());
     		return;
@@ -4740,13 +4741,12 @@ MouseOutHandler, MouseWheelHandler {
     int menuX, menuY;
     
     public void onMouseDown(MouseDownEvent e) {
-//    public void mousePressed(MouseEvent e) {
     	e.preventDefault();
-    	
+
     	// make sure canvas has focus, not stop button or something else, so all shortcuts work
     	cv.setFocus(true);
     	
-	stopElm = null; // if stopped, allow user to select other elements to fix circuit 
+		stopElm = null; // if stopped, allow user to select other elements to fix circuit
     	menuX = menuClientX = e.getX();
     	menuY = menuClientY = e.getY();
     	mouseDownTime = System.currentTimeMillis();
@@ -4754,7 +4754,7 @@ MouseOutHandler, MouseWheelHandler {
     	// maybe someone did copy in another window?  should really do this when
     	// window receives focus
     	enablePaste();
-    	
+
     	if (e.getNativeButton() != NativeEvent.BUTTON_LEFT && e.getNativeButton() != NativeEvent.BUTTON_MIDDLE)
     		return;
     	
@@ -4777,7 +4777,7 @@ MouseOutHandler, MouseWheelHandler {
 		tempMouseMode = MODE_DRAG_ROW;
 	    else if (e.isShiftKeyDown())
 		tempMouseMode = MODE_SELECT;
-	    else if (e.isAltKeyDown())
+	    else if (e.isAltKeyDown() || e.isMetaKeyDown())
 		tempMouseMode = MODE_DRAG_ALL;
 	    else if (e.isControlKeyDown() || e.isMetaKeyDown())
 		tempMouseMode = MODE_DRAG_POST;
@@ -4791,12 +4791,12 @@ MouseOutHandler, MouseWheelHandler {
 	if (!(dialogIsShowing()) && ((scopeSelected != -1 && scopes[scopeSelected].cursorInSettingsWheel()) ||
 		( scopeSelected == -1 && mouseElm instanceof ScopeElm && ((ScopeElm)mouseElm).elmScope.cursorInSettingsWheel()))){
 	    if (noEditCheckItem.getState())
-		return;
+			return;
 	    Scope s;
 	    if (scopeSelected != -1)
-		s=scopes[scopeSelected];
+			s=scopes[scopeSelected];
 	    else 
-		s=((ScopeElm)mouseElm).elmScope;
+			s=((ScopeElm)mouseElm).elmScope;
 	    s.properties();
 	    clearSelection();
 	    mouseDragging=false;
@@ -5381,22 +5381,28 @@ MouseOutHandler, MouseWheelHandler {
     	}
     	
     	if ((t&Event.ONKEYPRESS)!=0) {
-		if (cc=='-') {
-    		    menuPerformed("key", "zoomout");
-    		    e.cancel();
-    		}
-    		if (cc=='+' || cc == '=') {
-    		    menuPerformed("key", "zoomin");
-    		    e.cancel();
-    		}
-		if (cc=='0') {
-    		    menuPerformed("key", "zoom100");
-    		    e.cancel();
-		}
-		if (cc=='/' && shortcuts['/'] == null) {
-		    menuPerformed("key", "search");
-		    e.cancel();
-		}
+			if (cc=='-') {
+					menuPerformed("key", "zoomout");
+					e.cancel();
+				}
+				if (cc=='+' || cc == '=') {
+					menuPerformed("key", "zoomin");
+					e.cancel();
+				}
+			if (cc=='0') {
+					menuPerformed("key", "zoom100");
+					e.cancel();
+			}
+			if (cc=='/' && shortcuts['/'] == null) {
+				menuPerformed("key", "search");
+				e.cancel();
+			}
+
+			if (cc == 'e' && shortcuts['/'] == null) {
+				if (mouseElm != null && !(mouseElm instanceof SwitchElm) && !noEditCheckItem.getState()) {
+					doEdit(mouseElm);
+				}
+			}
     	}
     	
     	// all other shortcuts are ignored when editing disabled
