@@ -43,6 +43,7 @@ class EditInfo {
 	EditInfo(String n, String txt) {
 	    name = n;
 	    text = txt;
+	    dimensionless = noSliders = true;
 	}
 
 	static EditInfo createCheckbox(String name, boolean flag) {
@@ -55,6 +56,11 @@ class EditInfo {
 	EditInfo disallowSliders() { noSliders = true; return this; }
 	int changeFlag(int flags, int bit) {
 	    if (checkbox.getState())
+		return flags | bit;
+	    return flags & ~bit;
+	}
+	int changeFlagInverted(int flags, int bit) {
+	    if (!checkbox.getState())
 		return flags | bit;
 	    return flags & ~bit;
 	}
